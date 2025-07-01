@@ -120,7 +120,6 @@ func main() {
 			ai, err := fetchAIOverview(query)
 			if err != nil {
 				log.Println("❌", err)
-				data.AI.Error = err.Error()
 			} else {
 				data.AI = ai
 			}
@@ -157,7 +156,7 @@ func fetchAIOverview(query string) (*AIOverview, error) {
 	if err != nil {
 		fmt.Printf("print datenow 3: %+v\n", time.Now())
 		fmt.Printf("error when get json search %+v", err)
-		return nil, err
+		return &AIOverview{}, err
 	}
 
 	fmt.Printf("print datenow 4: %+v\n", time.Now())
@@ -167,7 +166,7 @@ func fetchAIOverview(query string) (*AIOverview, error) {
 	if !ok {
 		fmt.Printf("print datenow 5: %+v\n", time.Now())
 		log.Print("❌ AI Overview not found for this query")
-		return nil, errors.New("ai overview not found")
+		return &AIOverview{}, errors.New("ai overview not found")
 	}
 
 	fmt.Printf("print datenow 6: %+v %+v\n", time.Now(), aiOverviewRaw)
@@ -188,7 +187,7 @@ func fetchAIOverview(query string) (*AIOverview, error) {
 	fmt.Printf("print datenow 9: %+v %+v\n", time.Now(), aiOverviewRaw)
 	if err := json.Unmarshal(jsonBytes, &meta); err != nil {
 		fmt.Printf("print datenow 10: %+v %+v\n", time.Now(), aiOverviewRaw)
-		return nil, err
+		return &AIOverview{}, err
 	}
 
 	fmt.Println("✅ page_token:", meta.PageToken)
@@ -204,7 +203,7 @@ func fetchAIOverview(query string) (*AIOverview, error) {
 	results, err = search.GetJSON()
 	if err != nil {
 		fmt.Println("Failed to fetch AI Overview detail:", err)
-		return nil, err
+		return &AIOverview{}, err
 	}
 
 	aiOverviewRaw = results["ai_overview"]
